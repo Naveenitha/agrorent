@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL:"https://agrorent-3irp.onrender.com/api"
+  baseURL:import.meta.env.VITE_API_URL
 });
 
 // Add auth token to requests
