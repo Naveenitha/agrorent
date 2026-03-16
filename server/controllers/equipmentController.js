@@ -1,15 +1,22 @@
 const Equipment = require("../models/Equipment");
 
+const BASE_URL = "https://agrorent-3irp.onrender.com";
 
 // Get all available equipment (for farmers)
 exports.getAvailableEquipment = async (req, res) => {
-
   try {
 
     const equipments = await Equipment.find({ available: true })
       .populate("owner", "name email");
 
-    res.json(equipments);
+    const equipmentsWithImages = equipments.map(eq => ({
+      ...eq._doc,
+      imageUrl: eq.image
+        ? `${BASE_URL}/uploads/${eq.image}`
+        : null
+    }));
+
+    res.json(equipmentsWithImages);
 
   } catch (error) {
 
@@ -18,7 +25,6 @@ exports.getAvailableEquipment = async (req, res) => {
     });
 
   }
-
 };
 
 
@@ -30,7 +36,14 @@ exports.getEquipments = async (req, res) => {
     const equipments = await Equipment.find()
       .populate("owner", "name email");
 
-    res.json(equipments);
+    const equipmentsWithImages = equipments.map(eq => ({
+      ...eq._doc,
+      imageUrl: eq.image
+        ? `${BASE_URL}/uploads/${eq.image}`
+        : null
+    }));
+
+    res.json(equipmentsWithImages);
 
   } catch (error) {
 
@@ -62,9 +75,16 @@ exports.addEquipment = async (req, res) => {
       endTime: req.body.endTime || null
     });
 
+    const equipmentWithImage = {
+      ...equipment._doc,
+      imageUrl: equipment.image
+        ? `${BASE_URL}/uploads/${equipment.image}`
+        : null
+    };
+
     res.status(201).json({
       message: "Equipment added successfully",
-      equipment
+      equipment: equipmentWithImage
     });
 
   } catch (error) {
@@ -92,7 +112,14 @@ exports.getEquipmentById = async (req, res) => {
       });
     }
 
-    res.json(equipment);
+    const equipmentWithImage = {
+      ...equipment._doc,
+      imageUrl: equipment.image
+        ? `${BASE_URL}/uploads/${equipment.image}`
+        : null
+    };
+
+    res.json(equipmentWithImage);
 
   } catch (error) {
 
@@ -114,7 +141,14 @@ exports.getMyEquipment = async (req, res) => {
       owner: req.user.id
     });
 
-    res.json(equipments);
+    const equipmentsWithImages = equipments.map(eq => ({
+      ...eq._doc,
+      imageUrl: eq.image
+        ? `${BASE_URL}/uploads/${eq.image}`
+        : null
+    }));
+
+    res.json(equipmentsWithImages);
 
   } catch (error) {
 
@@ -147,7 +181,14 @@ exports.searchEquipment = async (req, res) => {
     const equipments = await Equipment.find(filter)
       .populate("owner", "name email");
 
-    res.json(equipments);
+    const equipmentsWithImages = equipments.map(eq => ({
+      ...eq._doc,
+      imageUrl: eq.image
+        ? `${BASE_URL}/uploads/${eq.image}`
+        : null
+    }));
+
+    res.json(equipmentsWithImages);
 
   } catch (error) {
 
@@ -173,7 +214,6 @@ exports.updateEquipment = async (req, res) => {
       });
     }
 
-    // Owner authorization check
     if (equipment.owner.toString() !== req.user.id) {
       return res.status(403).json({
         message: "Not authorized to update this equipment"
@@ -194,9 +234,16 @@ exports.updateEquipment = async (req, res) => {
       { new: true }
     );
 
+    const equipmentWithImage = {
+      ...updatedEquipment._doc,
+      imageUrl: updatedEquipment.image
+        ? `${BASE_URL}/uploads/${updatedEquipment.image}`
+        : null
+    };
+
     res.json({
       message: "Equipment updated successfully",
-      equipment: updatedEquipment
+      equipment: equipmentWithImage
     });
 
   } catch (error) {
@@ -223,7 +270,6 @@ exports.deleteEquipment = async (req, res) => {
       });
     }
 
-    // Owner authorization check
     if (equipment.owner.toString() !== req.user.id) {
       return res.status(403).json({
         message: "Not authorized to delete this equipment"
