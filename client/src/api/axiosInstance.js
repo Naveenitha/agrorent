@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "baseURL: "https://agrorent-3irp.onrender.com/api"
+  baseURL:"https://agrorent-3irp.onrender.com/api"
 });
 
 // Add auth token to requests
