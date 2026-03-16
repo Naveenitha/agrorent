@@ -2,6 +2,9 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
+const fs = require("fs");
+
 const connectDB = require("./config/db");
 
 const userRoutes = require("./routes/userRoutes");
@@ -14,7 +17,6 @@ const app = express();
 
 connectDB();
 
-// CORS configuration
 app.use(cors({
   origin: "*",
   credentials: true
@@ -23,12 +25,17 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve uploaded files
-const path = require("path");
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Ensure uploads folder exists
+const uploadPath = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath);
+}
+
+// Serve uploaded images
+app.use("/uploads", express.static(uploadPath));
 
 app.use("/api/users", userRoutes);
-app.use("/api/equipment", equipmentRoutes);
+app.use("/api/equipments", equipmentRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/payments", paymentRoutes);
