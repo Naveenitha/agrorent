@@ -7,7 +7,7 @@ function EquipmentCard({ equipment }) {
     <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
 
       <img
-        src={`http://localhost:5000/uploads/${equipment.image}`}
+        src={`https://agrorent-3irp.onrender.com/uploads/${equipment.image}`}
         alt={equipment.name}
         className="w-full h-48 object-cover"
       />
